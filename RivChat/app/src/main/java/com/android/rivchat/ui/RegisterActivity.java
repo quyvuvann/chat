@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    private void ShowEnterAnimation() {
+    private void ShowEnterAnimation() {// hiệu ứng
         Transition transition = TransitionInflater.from(this).inflateTransition(R.transition.fabtransition);
         getWindow().setSharedElementEnterTransition(transition);
 
@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void animateRevealShow() {
+    public void animateRevealShow() {// hiệu ứng
         Animator mAnimator = ViewAnimationUtils.createCircularReveal(cvAdd, cvAdd.getWidth()/2,0, fab.getWidth() / 2, cvAdd.getHeight());
         mAnimator.setDuration(500);
         mAnimator.setInterpolator(new AccelerateInterpolator());
@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
         animateRevealClose();
     }
 
-    public void clickRegister(View view) {
+    public void clickRegister(View view) { // nhận dữ liệu từ eidtext và truyền đi
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
         String repeatPassword = editTextRepeatPassword.getText().toString();
@@ -151,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
      * @param password
      * @return
      */
-    private boolean validate(String emailStr, String password, String repeatPassword) {
+    private boolean validate(String emailStr, String password, String repeatPassword) {// kiểm tra xem đúng định dạng không
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
         return password.length() > 0 && repeatPassword.equals(password) && matcher.find();
     }

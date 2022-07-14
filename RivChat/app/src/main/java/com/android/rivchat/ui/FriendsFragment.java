@@ -95,12 +95,12 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
             }
         };
-        if (dataListFriend == null) {
-            dataListFriend = FriendDB.getInstance(getContext()).getListFriend();
+        if (dataListFriend == null) {// phải khác null chứ nhể
+            dataListFriend = FriendDB.getInstance(getContext()).getListFriend();// lấy danh sahcs bạn bè
             if (dataListFriend.getListFriend().size() > 0) {
-                listFriendID = new ArrayList<>();
+                listFriendID = new ArrayList<>();// khởi tạo mảng danh sahcs id bạn bè
                 for (Friend friend : dataListFriend.getListFriend()) {
-                    listFriendID.add(friend.id);
+                    listFriendID.add(friend.id);// thêm id bạn bè vào dánh sách id bạn bè
                 }
                 detectFriendOnline.start();
             }
@@ -127,11 +127,11 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         deleteFriendReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String idDeleted = intent.getExtras().getString("idFriend");
+                String idDeleted = intent.getExtras().getString("idFriend");// lấy id cần xóa
                 for (Friend friend : dataListFriend.getListFriend()) {
-                    if(idDeleted.equals(friend.id)){
+                    if(idDeleted.equals(friend.id)){// duyệt trong danh sách nếu cùng với id cần xóa thì xóa
                         ArrayList<Friend> friends = dataListFriend.getListFriend();
-                        friends.remove(friend);
+                        friends.remove(friend);// xóa bạn bè
                         break;
                     }
                 }
@@ -193,7 +193,7 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     .setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
                     .setInputFilter("Email not found", new LovelyTextInputDialog.TextFilter() {
                         @Override
-                        public boolean check(String text) {
+                        public boolean check(String text) {// kiểm tra xem đã đúng định dạng email chưa
                             Pattern VALID_EMAIL_ADDRESS_REGEX =
                                     Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
                             Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(text);
@@ -245,14 +245,15 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                     .setMessage("Email not valid")
                                     .show();
                         } else {
-                            HashMap userMap = (HashMap) ((HashMap) dataSnapshot.getValue()).get(id);
+                            HashMap userMap = (HashMap) ((HashMap) dataSnapshot.getValue()).get(id);// lấy giá trị theo ìd
                             Friend user = new Friend();
-                            user.name = (String) userMap.get("name");
+                            user.name = (String) userMap.get("name");// gán dữ liệu
                             user.email = (String) userMap.get("email");
                             user.avata = (String) userMap.get("avata");
                             user.id = id;
                             user.idRoom = id.compareTo(StaticConfig.UID) > 0 ? (StaticConfig.UID + id).hashCode() + "" : "" + (id + StaticConfig.UID).hashCode();
-                            checkBeforAddFriend(id, user);
+                            //id so với StaticConfig >0 thì .....
+                            checkBeforAddFriend(id, user);// kiểm tra trươc skhi thêm bạn
                         }
                     }
                 }
@@ -299,8 +300,9 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
          */
         private void addFriend(final String idFriend, boolean isIdFriend) {
             if (idFriend != null) {
-                if (isIdFriend) {
+                if (isIdFriend) {// nếu là id bạn bè
                     FirebaseDatabase.getInstance().getReference().child("friend/" + StaticConfig.UID).push().setValue(idFriend)
+                            // tham chiếu đến "friend" và push giá trị theo idFriend
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -366,10 +368,10 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     HashMap mapRecord = (HashMap) dataSnapshot.getValue();
-                    Iterator listKey = mapRecord.keySet().iterator();
-                    while (listKey.hasNext()) {
+                    Iterator listKey = mapRecord.keySet().iterator();//duyệt từ đầu đến cuối
+                    while (listKey.hasNext()) {// khi có giá trị
                         String key = listKey.next().toString();
-                        listFriendID.add(mapRecord.get(key).toString());
+                        listFriendID.add(mapRecord.get(key).toString());//thêm vào danh sách id bạn bè
                     }
                     getAllFriendInfo(0);
                 } else {
@@ -401,15 +403,15 @@ public class FriendsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     if (dataSnapshot.getValue() != null) {
                         Friend user = new Friend();
                         HashMap mapUserInfo = (HashMap) dataSnapshot.getValue();
-                        user.name = (String) mapUserInfo.get("name");
+                        user.name = (String) mapUserInfo.get("name");//gán dữ liệu
                         user.email = (String) mapUserInfo.get("email");
                         user.avata = (String) mapUserInfo.get("avata");
-                        user.id = id;
+                        user.id = id;//gán id user = id của listidfriend
                         user.idRoom = id.compareTo(StaticConfig.UID) > 0 ? (StaticConfig.UID + id).hashCode() + "" : "" + (id + StaticConfig.UID).hashCode();
-                        dataListFriend.getListFriend().add(user);
+                        dataListFriend.getListFriend().add(user);//add dữ liệu vào trong danh sách  bạn bè
                         FriendDB.getInstance(getContext()).addFriend(user);
                     }
-                    getAllFriendInfo(index + 1);
+                    getAllFriendInfo(index + 1);// tăng vị trí lên 1
                 }
 
                 @Override
@@ -463,16 +465,16 @@ class ListFriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((ItemFriendViewHolder) holder).txtMessage.setTypeface(Typeface.DEFAULT);
+                        ((ItemFriendViewHolder) holder).txtMessage.setTypeface(Typeface.DEFAULT);// set du lieu
                         ((ItemFriendViewHolder) holder).txtName.setTypeface(Typeface.DEFAULT);
-                        Intent intent = new Intent(context, ChatActivity.class);
-                        intent.putExtra(StaticConfig.INTENT_KEY_CHAT_FRIEND, name);
+                        Intent intent = new Intent(context, ChatActivity.class);// chuyển vào màn chat
+                        intent.putExtra(StaticConfig.INTENT_KEY_CHAT_FRIEND, name);// truyền key và tên bạn bè
                         ArrayList<CharSequence> idFriend = new ArrayList<CharSequence>();
-                        idFriend.add(id);
-                        intent.putCharSequenceArrayListExtra(StaticConfig.INTENT_KEY_CHAT_ID, idFriend);
-                        intent.putExtra(StaticConfig.INTENT_KEY_CHAT_ROOM_ID, idRoom);
+                        idFriend.add(id);// thêm id vào mảng id
+                        intent.putCharSequenceArrayListExtra(StaticConfig.INTENT_KEY_CHAT_ID, idFriend);// truyền 1 mảng id
+                        intent.putExtra(StaticConfig.INTENT_KEY_CHAT_ROOM_ID, idRoom);// truyền id phòng chat
                         ChatActivity.bitmapAvataFriend = new HashMap<>();
-                        if (!avata.equals(StaticConfig.STR_DEFAULT_BASE64)) {
+                        if (!avata.equals(StaticConfig.STR_DEFAULT_BASE64)) {// nếu không phải avata mặc định
                             byte[] decodedString = Base64.decode(avata, Base64.DEFAULT);
                             ChatActivity.bitmapAvataFriend.put(id, BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length));
                         } else {

@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private EditText editTextUsername, editTextPassword;
     private LovelyProgressDialog waitingDialog;
-
     private AuthUtils authUtils;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -106,24 +105,25 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void clickRegisterLayout(View view) {
-        getWindow().setExitTransition(null);
+    public void clickRegisterLayout(View view) {//chuyển qua màn hình đănng kí
+        getWindow().setExitTransition(null);//hiệu ứng chuyển đổi thoát
         getWindow().setEnterTransition(null);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityOptions options =
-                    ActivityOptions.makeSceneTransitionAnimation(this, fab, fab.getTransitionName());
-            startActivityForResult(new Intent(this, RegisterActivity.class), StaticConfig.REQUEST_CODE_REGISTER, options.toBundle());
+                    ActivityOptions.makeSceneTransitionAnimation(this, fab, fab.getTransitionName());//Tạo một ActivityOptions để chuyển đổi giữa các Hoạt động bằng cách sử dụng hoạt ảnh cảnh giữa các Hoạt động.
+            startActivityForResult(new Intent(this, RegisterActivity.class),
+                    StaticConfig.REQUEST_CODE_REGISTER, options.toBundle());
         } else {
             startActivityForResult(new Intent(this, RegisterActivity.class), StaticConfig.REQUEST_CODE_REGISTER);
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {//tạo tài khoản với dữ liệu được lấy từ Resgister
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == StaticConfig.REQUEST_CODE_REGISTER && resultCode == RESULT_OK) {
-            authUtils.createUser(data.getStringExtra(StaticConfig.STR_EXTRA_USERNAME), data.getStringExtra(StaticConfig.STR_EXTRA_PASSWORD));
+            authUtils.createUser(data.getStringExtra(StaticConfig.STR_EXTRA_USERNAME), data.getStringExtra(StaticConfig.STR_EXTRA_PASSWORD));//tạo tài khoản với dữ liệu đc lấy
         }
     }
 
@@ -131,21 +131,21 @@ public class LoginActivity extends AppCompatActivity {
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
         if (validate(username, password)) {
-            authUtils.signIn(username, password);
+            authUtils.signIn(username, password);//nếu đúng định dạng thì đăng nhập với tài khoản mật khẩu được nhập từ edittext
         } else {
             Toast.makeText(this, "Invalid email or empty password", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() {//nút back
         super.onBackPressed();
         setResult(RESULT_CANCELED, null);
         finish();
     }
 
     private boolean validate(String emailStr, String password) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);// kiểm tra xem emailStr có phù hợp Với yêu cầu không
         return (password.length() > 0 || password.equals(";")) && matcher.find();
     }
 
@@ -169,11 +169,11 @@ public class LoginActivity extends AppCompatActivity {
          * @param password
          */
         void createUser(String email, String password) {
-            waitingDialog.setIcon(R.drawable.ic_add_friend)
+            waitingDialog.setIcon(R.drawable.ic_add_friend) //dialog chờ xoay
                     .setTitle("Registering....")
                     .setTopColorRes(R.color.colorPrimary)
                     .show();
-            mAuth.createUserWithEmailAndPassword(email, password)
+            mAuth.createUserWithEmailAndPassword(email, password)//tạo tài khoản với dữ liệu được lấy từ màn Register
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -182,11 +182,11 @@ public class LoginActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user. If sign in succeeds
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
+                            if (!task.isSuccessful()) {//nếu không thành công
                                 new LovelyInfoDialog(LoginActivity.this) {
                                     @Override
                                     public LovelyInfoDialog setConfirmButtonText(String text) {
-                                        findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                        findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 dismiss();
@@ -203,17 +203,17 @@ public class LoginActivity extends AppCompatActivity {
                                         .setCancelable(false)
                                         .show();
                             } else {
-                                initNewUserInfo();
+                                initNewUserInfo();//khởi tạo thông tin mặc định cho tài khoản
                                 Toast.makeText(LoginActivity.this, "Register and Login success", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                LoginActivity.this.finish();
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));// chuyển qua màn Main
+                                LoginActivity.this.finish();// hủy màn Login để k thể back lại đươc
                             }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            waitingDialog.dismiss();
+                            waitingDialog.dismiss();// kết thúc màn
                         }
                     })
             ;
@@ -245,7 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                                 new LovelyInfoDialog(LoginActivity.this) {
                                     @Override
                                     public LovelyInfoDialog setConfirmButtonText(String text) {
-                                        findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                        findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 dismiss();
@@ -262,8 +262,8 @@ public class LoginActivity extends AppCompatActivity {
                                         .setConfirmButtonText("Ok")
                                         .show();
                             } else {
-                                saveUserInfo();
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                saveUserInfo();//lưu thông tin
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));// chuyển qua màn Main
                                 LoginActivity.this.finish();
                             }
                         }
@@ -282,14 +282,14 @@ public class LoginActivity extends AppCompatActivity {
          * @param email
          */
         void resetPassword(final String email) {
-            mAuth.sendPasswordResetEmail(email)
+            mAuth.sendPasswordResetEmail(email)// gửi tới email
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             new LovelyInfoDialog(LoginActivity.this) {
                                 @Override
                                 public LovelyInfoDialog setConfirmButtonText(String text) {
-                                    findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                    findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             dismiss();
@@ -312,7 +312,7 @@ public class LoginActivity extends AppCompatActivity {
                     new LovelyInfoDialog(LoginActivity.this) {
                         @Override
                         public LovelyInfoDialog setConfirmButtonText(String text) {
-                            findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                            findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     dismiss();
@@ -335,16 +335,18 @@ public class LoginActivity extends AppCompatActivity {
          * Luu thong tin user info cho nguoi dung dang nhap
          */
         void saveUserInfo() {
+            //addListenerForSingleValueEvent()thực thi onDataChangephương thức ngay lập tức và sau khi thực thi phương thức đó một lần, nó sẽ ngừng lắng nghe vị trí tham chiếu mà nó được gắn vào.
             FirebaseDatabase.getInstance().getReference().child("user/" + StaticConfig.UID).addListenerForSingleValueEvent(new ValueEventListener() {
+                // tham chiếu đến "user"
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     waitingDialog.dismiss();
-                    HashMap hashUser = (HashMap) dataSnapshot.getValue();
+                    HashMap hashUser = (HashMap) dataSnapshot.getValue();// lấy giá dữ liệu
                     User userInfo = new User();
-                    userInfo.name = (String) hashUser.get("name");
-                    userInfo.email = (String) hashUser.get("email");
-                    userInfo.avata = (String) hashUser.get("avata");
-                    SharedPreferenceHelper.getInstance(LoginActivity.this).saveUserInfo(userInfo);
+                    userInfo.name = (String) hashUser.get("name");//gán dữ liệu cho người dùng
+                    userInfo.email = (String) hashUser.get("email");//
+                    userInfo.avata = (String) hashUser.get("avata");//
+                    SharedPreferenceHelper.getInstance(LoginActivity.this).saveUserInfo(userInfo);//luu dữ liệu
                 }
 
                 @Override

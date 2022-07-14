@@ -21,7 +21,8 @@ import java.util.HashMap;
 
 
 
-public class ServiceUtils {
+public class
+ServiceUtils {
 
     private static ServiceConnection connectionServiceFriendChatForStart = null;
     private static ServiceConnection connectionServiceFriendChatForDestroy = null;

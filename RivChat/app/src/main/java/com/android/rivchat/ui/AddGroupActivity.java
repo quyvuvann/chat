@@ -142,7 +142,7 @@ public class AddGroupActivity extends AppCompatActivity {
         final String idGroup = groupEdit.id;
         Room room = new Room();
         for (String id : listIDChoose) {
-            room.member.add(id);
+            room.member.add(id);// thêm thành viên đã được chọn theo Id
         }
         room.groupInfo.put("name", editTextGroupName.getText().toString());
         room.groupInfo.put("admin", StaticConfig.UID);
@@ -150,7 +150,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        addRoomForUser(idGroup, 0);
+                        addRoomForUser(idGroup, 0);// thêm người dùng cho phòng
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -160,7 +160,7 @@ public class AddGroupActivity extends AppCompatActivity {
                         new LovelyInfoDialog(AddGroupActivity.this) {
                             @Override
                             public LovelyInfoDialog setConfirmButtonText(String text) {
-                                findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         dismiss();
@@ -191,30 +191,30 @@ public class AddGroupActivity extends AppCompatActivity {
         final String idGroup = (StaticConfig.UID + System.currentTimeMillis()).hashCode() + "";
         Room room = new Room();
         for (String id : listIDChoose) {
-            room.member.add(id);
+            room.member.add(id);// thêm id đã được chọn vào danh sách thành viên
         }
         room.groupInfo.put("name", editTextGroupName.getText().toString());
         room.groupInfo.put("admin", StaticConfig.UID);
         FirebaseDatabase.getInstance().getReference().child("group/" + idGroup).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                addRoomForUser(idGroup, 0);
+                addRoomForUser(idGroup, 0);// thêm thành viên
             }
         });
     }
 
     private void deleteRoomForUser(final String roomId, final int userIndex) {
-        if (userIndex == listIDRemove.size()) {
+        if (userIndex == listIDRemove.size()) {// nếu userIndex  người dùng bằng danh sách id cần xóa
             dialogWait.dismiss();
             Toast.makeText(this, "Edit group success", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK, null);
-            AddGroupActivity.this.finish();
+            AddGroupActivity.this.finish();// end màn AdđroupActivity
         } else {
             FirebaseDatabase.getInstance().getReference().child("user/" + listIDRemove.toArray()[userIndex] + "/group/" + roomId).removeValue()
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            deleteRoomForUser(roomId, userIndex + 1);
+                            deleteRoomForUser(roomId, userIndex + 1);// tăng vị trí lên 1
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -224,7 +224,7 @@ public class AddGroupActivity extends AppCompatActivity {
                             new LovelyInfoDialog(AddGroupActivity.this) {
                                 @Override
                                 public LovelyInfoDialog setConfirmButtonText(String text) {
-                                    findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                    findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             dismiss();
@@ -268,7 +268,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     new LovelyInfoDialog(AddGroupActivity.this) {
                         @Override
                         public LovelyInfoDialog setConfirmButtonText(String text) {
-                            findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                            findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     dismiss();

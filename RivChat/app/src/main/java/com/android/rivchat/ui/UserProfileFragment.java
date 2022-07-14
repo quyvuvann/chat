@@ -82,9 +82,9 @@ public class UserProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private ValueEventListener userListener = new ValueEventListener() {
+    private ValueEventListener userListener = new ValueEventListener() { // ValueEventListener : (đọc dử liêu)
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(DataSnapshot dataSnapshot) { //ondatachange :Phương thức này sẽ được gọi với một ảnh chụp nhanh dữ liệu tại vị trí này.
             //Lấy thông tin của user về và cập nhật lên giao diện
             listConfig.clear();
             myAccount = dataSnapshot.getValue(User.class);
@@ -100,7 +100,7 @@ public class UserProfileFragment extends Fragment {
 
             setImageAvatar(context, myAccount.avata);
             SharedPreferenceHelper preferenceHelper = SharedPreferenceHelper.getInstance(context);
-            preferenceHelper.saveUserInfo(myAccount);
+            preferenceHelper.saveUserInfo(myAccount);// lưu thông tin người dùng
         }
 
         @Override
@@ -171,7 +171,7 @@ public class UserProfileFragment extends Fragment {
     };
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {// nhận kết quả
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
@@ -252,7 +252,7 @@ public class UserProfileFragment extends Fragment {
         listConfig.add(signout);
     }
 
-    private void setImageAvatar(Context context, String imgBase64){
+    private void setImageAvatar(Context context, String imgBase64){// set image cho profile
         try {
             Resources res = getResources();
             //Nếu chưa có avatar thì để hình mặc định
@@ -294,7 +294,7 @@ public class UserProfileFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, int position) {// bắt sự kiện cho view
             final Configuration config = profileConfig.get(position);
             holder.label.setText(config.getLabel());
             holder.value.setText(config.getValue());
@@ -302,7 +302,7 @@ public class UserProfileFragment extends Fragment {
             ((RelativeLayout)holder.label.getParent()).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(config.getLabel().equals(SIGNOUT_LABEL)){
+                    if(config.getLabel().equals(SIGNOUT_LABEL)){// nếu click vào label là singout
                         FirebaseAuth.getInstance().signOut();
                         FriendDB.getInstance(getContext()).dropDB();
                         GroupDB.getInstance(getContext()).dropDB();
@@ -310,9 +310,8 @@ public class UserProfileFragment extends Fragment {
                         getActivity().finish();
                     }
 
-                    if(config.getLabel().equals(USERNAME_LABEL)){
-                        View vewInflater = LayoutInflater.from(context)
-                                .inflate(R.layout.dialog_edit_username,  (ViewGroup) getView(), false);
+                    if(config.getLabel().equals(USERNAME_LABEL)){// nếu click vào label là username
+                        View vewInflater = LayoutInflater.from(context).inflate(R.layout.dialog_edit_username, (ViewGroup) getView(), false);
                         final EditText input = (EditText)vewInflater.findViewById(R.id.edit_username);
                         input.setText(myAccount.name);
                         /*Hiển thị dialog với dEitText cho phép người dùng nhập username mới*/
@@ -337,7 +336,7 @@ public class UserProfileFragment extends Fragment {
                                 }).show();
                     }
 
-                    if(config.getLabel().equals(RESETPASS_LABEL)){
+                    if(config.getLabel().equals(RESETPASS_LABEL)){// nếu click label là resetpass
                         new AlertDialog.Builder(context)
                                 .setTitle("Password")
                                 .setMessage("Are you sure want to reset password?")
@@ -373,7 +372,7 @@ public class UserProfileFragment extends Fragment {
             tvUserName.setText(newName);
             setupArrayListInfo(myAccount);
         }
-
+        //resetpassword và pasword được gửi qua mail dăng kí
         void resetPassword(final String email) {
             mAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -382,7 +381,7 @@ public class UserProfileFragment extends Fragment {
                             new LovelyInfoDialog(context) {
                                 @Override
                                 public LovelyInfoDialog setConfirmButtonText(String text) {
-                                    findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                    findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             dismiss();
@@ -405,7 +404,7 @@ public class UserProfileFragment extends Fragment {
                             new LovelyInfoDialog(context) {
                                 @Override
                                 public LovelyInfoDialog setConfirmButtonText(String text) {
-                                    findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                    findView(R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             dismiss();

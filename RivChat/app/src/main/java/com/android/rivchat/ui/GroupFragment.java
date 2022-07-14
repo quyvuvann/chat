@@ -101,18 +101,19 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return layout;
     }
 
-    private void getListGroup(){
+    private void getListGroup(){// lấy danh sahcs nhóm
         FirebaseDatabase.getInstance().getReference().child("user/"+ StaticConfig.UID+"/group").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null) {
                     HashMap mapListGroup = (HashMap) dataSnapshot.getValue();
-                    Iterator iterator = mapListGroup.keySet().iterator();
+                    Iterator iterator = mapListGroup.keySet().iterator();//Duyệt các phần tử từ đầu đến cuối của một collection.
+                                                                            //Iterator cho phép xóa phần tử khi lặp một collection.
                     while (iterator.hasNext()){
                         String idGroup = (String) mapListGroup.get(iterator.next().toString());
                         Group newGroup = new Group();
-                        newGroup.id = idGroup;
-                        listGroup.add(newGroup);
+                        newGroup.id = idGroup; //lấy idgroun
+                        listGroup.add(newGroup);// thêm groud vao list
                     }
                     getGroupInfo(0);
                 }else{
@@ -149,10 +150,10 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getValue() != null){
                         HashMap mapGroup = (HashMap) dataSnapshot.getValue();
-                        ArrayList<String> member = (ArrayList<String>) mapGroup.get("member");
+                        ArrayList<String> member = (ArrayList<String>) mapGroup.get("member");//tham chiếu đến "mumber" và lấy dữ liêu
                         HashMap mapGroupInfo = (HashMap) mapGroup.get("groupInfo");
-                        for(String idMember: member){
-                            listGroup.get(indexGroup).member.add(idMember);
+                        for(String idMember: member){ // duyệt cacsthanhf viên
+                            listGroup.get(indexGroup).member.add(idMember);// thêm id thành viên vào danh sách thành viên tại vị tri Indexgroud trong danh sách group
                         }
                         listGroup.get(indexGroup).groupInfo.put("name", (String) mapGroupInfo.get("name"));
                         listGroup.get(indexGroup).groupInfo.put("admin", (String) mapGroupInfo.get("admin"));
@@ -185,10 +186,10 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
                 int posGroup = item.getIntent().getIntExtra(CONTEXT_MENU_KEY_INTENT_DATA_POS, -1);
-                if(((String)listGroup.get(posGroup).groupInfo.get("admin")).equals(StaticConfig.UID)) {
+                if(((String)listGroup.get(posGroup).groupInfo.get("admin")).equals(StaticConfig.UID)) {// nếu tại vị trí posGroup trong danh dánh group trỏ đến "admin" trong groudInfo nếu là Static
                     Group group = listGroup.get(posGroup);
-                    listGroup.remove(posGroup);
-                    if(group != null){
+                    listGroup.remove(posGroup);// xóa ground tại vị trí posGroup ( posGround chuyển thành group)
+                    if(group != null){//nếu dữ liệu khong trống thì xóa
                         deleteGroup(group, 0);
                     }
                 }else{
@@ -198,8 +199,8 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             case CONTEXT_MENU_EDIT:
                 int posGroup1 = item.getIntent().getIntExtra(CONTEXT_MENU_KEY_INTENT_DATA_POS, -1);
                 if(((String)listGroup.get(posGroup1).groupInfo.get("admin")).equals(StaticConfig.UID)) {
-                    Intent intent = new Intent(getContext(), AddGroupActivity.class);
-                    intent.putExtra("groupId", listGroup.get(posGroup1).id);
+                    Intent intent = new Intent(getContext(), AddGroupActivity.class);// chuyển qua màn AddGroup
+                    intent.putExtra("groupId", listGroup.get(posGroup1).id);// put dữ liệu
                     startActivityForResult(intent, REQUEST_EDIT_GROUP);
                 }else{
                     Toast.makeText(getActivity(), "You are not admin", Toast.LENGTH_LONG).show();
@@ -223,14 +224,14 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     public void deleteGroup(final Group group, final int index){
-        if(index == group.member.size()){
+        if(index == group.member.size()){// nếu index bằng số thành viên trong group
             FirebaseDatabase.getInstance().getReference().child("group/"+group.id).removeValue()
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             progressDialog.dismiss();
-                            GroupDB.getInstance(getContext()).deleteGroup(group.id);
-                            listGroup.remove(group);
+                            GroupDB.getInstance(getContext()).deleteGroup(group.id);//xóa group theo id group
+                            listGroup.remove(group);// xóa group trong danh sách group
                             adapter.notifyDataSetChanged();
                             Toast.makeText(getContext(), "Deleted group", Toast.LENGTH_SHORT).show();
                         }
@@ -255,7 +256,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            deleteGroup(group, index + 1);
+                            deleteGroup(group, index + 1); // gọi lại hàm tăng index lên 1
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -277,7 +278,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     }
 
-    public void leaveGroup(final Group group){
+    public void leaveGroup(final Group group){// xáo group với group đươc truyền vào
         FirebaseDatabase.getInstance().getReference().child("group/"+group.id+"/member")
                 .orderByValue().equalTo(StaticConfig.UID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -296,7 +297,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                             String memberIndex = "";
                             ArrayList<String> result = ((ArrayList<String>)dataSnapshot.getValue());
                             for(int i = 0; i < result.size(); i++){
-                                if(result.get(i) != null){
+                                if(result.get(i) != null){// nếu kết quả tại vị trí i khác null thì chuyển thành chuỗi
                                     memberIndex = String.valueOf(i);
                                 }
                             }
@@ -309,8 +310,7 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             waitingLeavingGroup.dismiss();
-
-                                            listGroup.remove(group);
+                                            listGroup.remove(group);// xóa group khỏi dnah sách
                                             adapter.notifyDataSetChanged();
                                             GroupDB.getInstance(getContext()).deleteGroup(group.id);
                                             new LovelyInfoDialog(getContext())

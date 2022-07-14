@@ -18,7 +18,9 @@ public class SharedPreferenceHelper {
     private static String SHARE_KEY_UID = "uid";
 
 
-    private SharedPreferenceHelper() {}
+    private SharedPreferenceHelper() {
+
+    }
 
     public static SharedPreferenceHelper getInstance(Context context) {
         if (instance == null) {

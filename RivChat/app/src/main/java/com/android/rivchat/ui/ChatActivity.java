@@ -63,34 +63,35 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         btnSend = (ImageButton) findViewById(R.id.btnSend);
         btnSend.setOnClickListener(this);
 
-        String base64AvataUser = SharedPreferenceHelper.getInstance(this).getUserInfo().avata;
-        if (!base64AvataUser.equals(StaticConfig.STR_DEFAULT_BASE64)) {
-            byte[] decodedString = Base64.decode(base64AvataUser, Base64.DEFAULT);
-            bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        String base64AvataUser = SharedPreferenceHelper.getInstance(this).getUserInfo().avata;// lấy thông tin ảnh của người dùng
+        if (!base64AvataUser.equals(StaticConfig.STR_DEFAULT_BASE64)) {// nếu không phải ảnh mặc định
+            byte[] decodedString = Base64.decode(base64AvataUser, Base64.DEFAULT);// trẢ mnagr chuỗi đã giải mã
+            bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);//Giải mã một bitmap bất biến từ mảng byte
         } else {
             bitmapAvataUser = null;
         }
 
         editWriteMessage = (EditText) findViewById(R.id.editWriteMessage);
         if (idFriend != null && nameFriend != null) {
-            getSupportActionBar().setTitle(nameFriend);
+            getSupportActionBar().setTitle(nameFriend);// set title cho getsupportActionbar
             linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recyclerChat = (RecyclerView) findViewById(R.id.recyclerChat);
-            recyclerChat.setLayoutManager(linearLayoutManager);
-            adapter = new ListMessageAdapter(this, consersation, bitmapAvataFriend, bitmapAvataUser);
+            recyclerChat.setLayoutManager(linearLayoutManager);// set layout
+            adapter = new ListMessageAdapter(this, consersation, bitmapAvataFriend, bitmapAvataUser);// khởi tạo adapter
             FirebaseDatabase.getInstance().getReference().child("message/" + roomId).addChildEventListener(new ChildEventListener() {
+                // tham chiếu đến "message tại id phong"
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     if (dataSnapshot.getValue() != null) {
                         HashMap mapMessage = (HashMap) dataSnapshot.getValue();
                         Message newMessage = new Message();
-                        newMessage.idSender = (String) mapMessage.get("idSender");
+                        newMessage.idSender = (String) mapMessage.get("idSender");// gán dữ liệu
                         newMessage.idReceiver = (String) mapMessage.get("idReceiver");
                         newMessage.text = (String) mapMessage.get("text");
                         newMessage.timestamp = (long) mapMessage.get("timestamp");
-                        consersation.getListMessageData().add(newMessage);
+                        consersation.getListMessageData().add(newMessage);// add dữ liệu vào danh sách hội thoại
                         adapter.notifyDataSetChanged();
-                        linearLayoutManager.scrollToPosition(consersation.getListMessageData().size() - 1);
+                        linearLayoutManager.scrollToPosition(consersation.getListMessageData().size() - 1);// kèo màn đến vị trí cuỗi cùng trong danh sách
                     }
                 }
 
@@ -122,7 +123,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
             Intent result = new Intent();
-            result.putExtra("idFriend", idFriend.get(0));
+            result.putExtra("idFriend", idFriend.get(0));// truyền dữ liệu
             setResult(RESULT_OK, result);
             this.finish();
         }
@@ -144,11 +145,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if (content.length() > 0) {
                 editWriteMessage.setText("");
                 Message newMessage = new Message();
-                newMessage.text = content;
+                newMessage.text = content;  //gán dữ liệu
                 newMessage.idSender = StaticConfig.UID;
                 newMessage.idReceiver = roomId;
                 newMessage.timestamp = System.currentTimeMillis();
-                FirebaseDatabase.getInstance().getReference().child("message/" + roomId).push().setValue(newMessage);
+                FirebaseDatabase.getInstance().getReference().child("message/" + roomId).push().setValue(newMessage);// truyền dữ lieeun vào cuộc hội thoại
             }
         }
     }
@@ -185,7 +186,7 @@ class ListMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemMessageFriendHolder) {
-            ((ItemMessageFriendHolder) holder).txtContent.setText(consersation.getListMessageData().get(position).text);
+            ((ItemMessageFriendHolder) holder).txtContent.setText(consersation.getListMessageData().get(position).text);// set content cho txtcontent
             Bitmap currentAvata = bitmapAvata.get(consersation.getListMessageData().get(position).idSender);
             if (currentAvata != null) {
                 ((ItemMessageFriendHolder) holder).avata.setImageBitmap(currentAvata);

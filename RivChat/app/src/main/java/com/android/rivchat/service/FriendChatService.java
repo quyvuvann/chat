@@ -59,8 +59,8 @@ public class FriendChatService extends Service {
         mapMark = new HashMap<>();
         mapQuery = new HashMap<>();
         mapChildEventListenerMap = new HashMap<>();
-        listFriend = FriendDB.getInstance(this).getListFriend();
-        listGroup = GroupDB.getInstance(this).getListGroups();
+        listFriend = FriendDB.getInstance(this).getListFriend();// lấy danh sách bạn bè
+        listGroup = GroupDB.getInstance(this).getListGroups();// lấy danh sách nhóm
         listKey = new ArrayList<>();
         mapBitmap = new HashMap<>();
         updateOnline = new CountDownTimer(System.currentTimeMillis(), StaticConfig.TIME_TO_REFRESH) {
@@ -227,7 +227,7 @@ public class FriendChatService extends Service {
         Log.d(TAG, "OnDestroyService");
     }
 
-    public class LocalBinder extends Binder {
+    public class    LocalBinder extends Binder {
         public FriendChatService getService() {
             // Return this instance of LocalService so clients can call public methods
             return FriendChatService.this;
